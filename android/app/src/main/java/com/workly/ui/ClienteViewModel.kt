@@ -1,36 +1,15 @@
-package com.workly.cliente.ui
+package com.workly.cliente
 
+import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.workly.cliente.data.model.Cliente
-import com.workly.cliente.data.repository.ClienteRepository
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
+import com.workly.cliente.model.Cliente
 
-class ClienteViewModel(
-    private val repository: ClienteRepository
-) : ViewModel() {
+class ClienteViewModel : ViewModel() {
 
-    val clientes = repository.listarTodos().stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
-        initialValue = emptyList()
-    )
+    private val _clientes = mutableStateListOf<Cliente>()
+    val clientes: List<Cliente> = _clientes
 
-    fun salvar(cliente: Cliente) {
-        viewModelScope.launch {
-            if (cliente.id == 0) {
-                repository.inserir(cliente)
-            } else {
-                repository.atualizar(cliente)
-            }
-        }
-    }
-
-    fun deletar(cliente: Cliente) {
-        viewModelScope.launch {
-            repository.deletar(cliente)
-        }
+    fun adicionarCliente(cliente: Cliente) {
+        _clientes.add(cliente)
     }
 }

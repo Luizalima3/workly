@@ -1,75 +1,100 @@
-package com.workly.cliente.ui
+package com.workly.cliente
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.workly.cliente.data.model.Cliente
+import com.workly.cliente.model.Cliente
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ClienteFormScreen(
-    onSalvar: (Cliente) -> Unit
+    viewModel: ClienteViewModel,
+    onSalvar: () -> Unit
 ) {
-    var nome by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
-    var telefone by remember { mutableStateOf("") }
-    var endereco by remember { mutableStateOf("") }
+    val nome = remember { mutableStateOf("") }
+    val email = remember { mutableStateOf("") }
+    val telefone = remember { mutableStateOf("") }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
-    ) {
-        OutlinedTextField(
-            value = nome,
-            onValueChange = { nome = it },
-            label = { Text("Nome") },
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        OutlinedTextField(
-            value = email,
-            onValueChange = { email = it },
-            label = { Text("Email") },
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        OutlinedTextField(
-            value = telefone,
-            onValueChange = { telefone = it },
-            label = { Text("Telefone") },
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        OutlinedTextField(
-            value = endereco,
-            onValueChange = { endereco = it },
-            label = { Text("Endereço") },
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Button(
-            onClick = {
-                onSalvar(
-                    Cliente(
-                        nome = nome,
-                        email = email,
-                        telefone = telefone,
-                        endereco = endereco
-                    )
-                )
-            },
-            modifier = Modifier.fillMaxWidth()
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Cadastro de Cliente") }
+            )
+        }
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .padding(16.dp),
+            verticalArrangement = Arrangement.Top
         ) {
-            Text("Salvar")
+            OutlinedTextField(
+                value = nome.value,
+                onValueChange = { nome.value = it },
+                label = { Text("Nome") },
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            OutlinedTextField(
+                value = email.value,
+                onValueChange = { email.value = it },
+                label = { Text("E-mail") },
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            OutlinedTextField(
+                value = telefone.value,
+                onValueChange = { telefone.value = it },
+                label = { Text("Telefone") },
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            Button(
+                onClick = {
+                    if (
+                        nome.value.isNotBlank() &&
+                        email.value.isNotBlank() &&
+                        telefone.value.isNotBlank()
+                    ) {
+                        viewModel.adicionarCliente(
+                            Cliente(
+                                nome = nome.value,
+                                email = email.value,
+                                telefone = telefone.value
+                            )
+                        )
+                        nome.value = ""
+                        email.value = ""
+                        telefone.value = ""
+                        onSalvar()
+                    }
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Salvar")
+            }
         }
     }
 }

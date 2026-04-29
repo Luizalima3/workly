@@ -1,20 +1,26 @@
-package com.workly
+package workly
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import com.workly.cliente.ui.ClienteFormScreen
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.ui.Modifier
+import workly.navigation.WorklyApp
+import workly.ui.theme.WorklyTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setContent {
-            ClienteFormScreen(
-                onSalvar = { cliente ->
-                    println(cliente)
+            WorklyTheme {
+                Surface(
+                    modifier = Modifier,
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    WorklyApp()
                 }
-            )
+            }
         }
     }
 }
