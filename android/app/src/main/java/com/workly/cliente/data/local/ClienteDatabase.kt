@@ -2,7 +2,7 @@ package com.workly.cliente.data.local
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import com.seupacote.cliente.data.model.Cliente
+import com.workly.cliente.data.model.Cliente
 
 @Database(
     entities = [Cliente::class],
