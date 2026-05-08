@@ -1,5 +1,6 @@
 package com.example.workly.screens
 
+import android.R.attr.top
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
@@ -27,7 +28,9 @@ fun LoginScreen(navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
+            .padding(30.dp)
+            .padding(0.dp, 30.dp),
+
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
