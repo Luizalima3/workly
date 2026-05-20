@@ -20,5 +20,5 @@ val LightBackground = Color(0xFFF8FAFC)
 val LightSurface = Color(0xFFFFFFFF)
 
 // Text Colors
-val TextLight = Color(0xFFF8FAFC)
-val TextDark = Color(0xFF1E293B)
+val TextLight = Color(0xFF000000)
+val TextDark = Color(0xFFEFEFEF)

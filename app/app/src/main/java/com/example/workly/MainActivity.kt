@@ -1,4 +1,4 @@
-package com.example.workly.screens
+package com.example.workly
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity

@@ -1,4 +1,4 @@
-package com.example.workly.screens
+package com.example.workly.view
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
