@@ -5,6 +5,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.workly.view.ClientHomeScreen
+import com.example.workly.view.ClientProfileScreen
 import com.example.workly.view.CreateServiceScreen
 import com.example.workly.view.LoginScreen
 import com.example.workly.view.ProfileScreen
@@ -43,6 +44,10 @@ fun AppNavigation() {
 
         composable("profile") {
             ProfileScreen(navController)
+        }
+
+        composable("client_profile") {
+            ClientProfileScreen(navController)
         }
     }
 }
