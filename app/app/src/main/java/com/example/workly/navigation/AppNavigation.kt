@@ -10,6 +10,7 @@ import com.example.workly.view.CreateServiceScreen
 import com.example.workly.view.LoginScreen
 import com.example.workly.view.ProfileScreen
 import com.example.workly.view.ProviderHomeScreen
+import com.example.workly.view.ServiceDetailScreen
 import com.example.workly.view.SignupScreen
 
 @Composable
@@ -36,6 +37,21 @@ fun AppNavigation() {
 
         composable("provider_home") {
             ProviderHomeScreen(navController)
+        }
+
+        composable("service_detail/{role}/{category}/{title}?description={description}") { backStackEntry ->
+            val role = backStackEntry.arguments?.getString("role")
+            val category = backStackEntry.arguments?.getString("category")
+            val title = backStackEntry.arguments?.getString("title")
+            val description = backStackEntry.arguments?.getString("description")
+
+            ServiceDetailScreen(
+                navController = navController,
+                role = role,
+                category = category,
+                title = title,
+                description = description
+            )
         }
 
         composable("create_service") {

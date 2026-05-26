@@ -1,5 +1,6 @@
 package com.example.workly.view
 
+import android.net.Uri
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -13,40 +14,47 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
+import com.example.workly.components.ServiceCard
+import com.example.workly.model.ServiceItem
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ClientHomeScreen(navController: NavController) {
 
     val services = listOf(
-        Triple(
-            "Conserto de pia",
-            "Preciso urgente",
-            "Editar"
+        ServiceItem(
+            title = "Conserto de pia",
+            description = "Preciso urgente, cozinha vazando",
+            category = "Encanador",
+            buttonText = "Ver detalhes"
         ),
-
-        Triple(
-            "Instalar ventilador",
-            "Quarto",
-            "Editar"
+        ServiceItem(
+            title = "Instalar ventilador",
+            description = "Quarto precisa de instalação rápida",
+            category = "Eletricista",
+            buttonText = "Ver detalhes"
+        ),
+        ServiceItem(
+            title = "Pintar sala",
+            description = "Sala pequena, pintura interna",
+            category = "Pintor",
+            buttonText = "Ver detalhes"
         )
     )
+
+    val filterCategories = listOf("Todos", "Eletricista", "Encanador", "Pintor")
+    var selectedCategory by remember { mutableStateOf("Todos") }
 
     var searchQuery by remember {
         mutableStateOf("")
     }
 
     val filteredServices = services.filter { service ->
-
-        service.first.contains(
-            searchQuery,
-            ignoreCase = true
-        ) ||
-
-                service.second.contains(
-                    searchQuery,
-                    ignoreCase = true
-                )
+        val matchesQuery = service.title.contains(searchQuery, ignoreCase = true) ||
+                service.description.contains(searchQuery, ignoreCase = true) ||
+                service.category.contains(searchQuery, ignoreCase = true)
+        val matchesCategory = selectedCategory == "Todos" || service.category == selectedCategory
+        matchesQuery && matchesCategory
     }
 
     Scaffold(
@@ -136,6 +144,21 @@ fun ClientHomeScreen(navController: NavController) {
                 }
             )
 
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 12.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                filterCategories.forEach { category ->
+                    FilterChip(
+                        selected = selectedCategory == category,
+                        onClick = { selectedCategory = category },
+                        label = { Text(category) }
+                    )
+                }
+            }
+
             LazyColumn(
 
                 verticalArrangement =
@@ -148,95 +171,17 @@ fun ClientHomeScreen(navController: NavController) {
             ) {
 
                 items(filteredServices) { service ->
-
-                    val title = service.first
-                    val description = service.second
-                    val buttonText = service.third
-
-                    Card(
-
-                        modifier = Modifier.fillMaxWidth(),
-
-                        elevation =
-                            CardDefaults.cardElevation(
-                                defaultElevation = 4.dp
-                            ),
-
-                        colors =
-                            CardDefaults.cardColors(
-                                containerColor =
-                                    MaterialTheme
-                                        .colorScheme
-                                        .surfaceContainer
-                            ),
-
-                        shape = MaterialTheme.shapes.medium
-
-                    ) {
-
-                        Column(
-
-                            modifier = Modifier
-                                .padding(12.dp)
-                                .fillMaxWidth()
-                        ) {
-
-                            Text(
-
-                                text = title,
-
-                                style =
-                                    MaterialTheme
-                                        .typography
-                                        .titleMedium
+                    ServiceCard(
+                        title = service.title,
+                        description = service.description,
+                        category = service.category,
+                        buttonText = service.buttonText,
+                        onClick = {
+                            navController.navigate(
+                                "service_detail/client/${Uri.encode(service.category)}/${Uri.encode(service.title)}?description=${Uri.encode(service.description)}"
                             )
-
-                            Spacer(
-                                modifier = Modifier.height(4.dp)
-                            )
-
-                            Text(
-
-                                text = description,
-
-                                style =
-                                    MaterialTheme
-                                        .typography
-                                        .bodyMedium,
-
-                                color =
-                                    MaterialTheme
-                                        .colorScheme
-                                        .onSurfaceVariant
-                            )
-
-                            Spacer(
-                                modifier = Modifier.height(12.dp)
-                            )
-
-                            Row(
-
-                                modifier =
-                                    Modifier.fillMaxWidth(),
-
-                                horizontalArrangement =
-                                    Arrangement.End
-                            ) {
-
-                                Button(
-
-                                    onClick = {
-
-                                        // ação futura
-                                    }
-
-                                ) {
-
-                                    Text(buttonText)
-                                }
-                            }
                         }
-                    }
+                    )
                 }
             }
         }
