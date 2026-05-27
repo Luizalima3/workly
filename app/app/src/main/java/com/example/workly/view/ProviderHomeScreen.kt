@@ -9,47 +9,61 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation.NavController
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.Alignment
 import androidx.navigation.compose.rememberNavController
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.workly.components.ServiceCard
 import com.example.workly.model.ServiceItem
+import com.example.workly.viewmodel.ServiceViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProviderHomeScreen(navController: NavController) {
+    val viewModel: ServiceViewModel = viewModel()
+    val availableServices by viewModel.availableServices.collectAsState()
+    val isLoading by viewModel.isLoading.collectAsState()
 
-    val services = listOf(
-        ServiceItem(
-            title = "Trocar chuveiro",
-            description = "Apartamento com vazamento no banheiro.",
-            category = "Encanador",
-            buttonText = "Tenho interesse"
-        ),
-        ServiceItem(
-            title = "Pintar parede",
-            description = "Sala de estar precisa de pintura rápida.",
-            category = "Pintor",
-            buttonText = "Tenho interesse"
-        ),
-        ServiceItem(
-            title = "Conserto de pia",
-            description = "Cozinha com vazamento frequente.",
-            category = "Encanador",
-            buttonText = "Tenho interesse"
-        ),
-        ServiceItem(
-            title = "Instalar ventilador",
-            description = "Quarto pequeno, só instalação elétrica.",
-            category = "Eletricista",
-            buttonText = "Tenho interesse"
+    LaunchedEffect(Unit) {
+        viewModel.loadAvailableServices()
+    }
+
+    val services = availableServices.ifEmpty {
+        listOf(
+            ServiceItem(
+                title = "Trocar chuveiro",
+                description = "Apartamento com vazamento no banheiro.",
+                category = "Encanador",
+                buttonText = "Tenho interesse"
+            ),
+            ServiceItem(
+                title = "Pintar parede",
+                description = "Sala de estar precisa de pintura rápida.",
+                category = "Pintor",
+                buttonText = "Tenho interesse"
+            ),
+            ServiceItem(
+                title = "Conserto de pia",
+                description = "Cozinha com vazamento frequente.",
+                category = "Encanador",
+                buttonText = "Tenho interesse"
+            ),
+            ServiceItem(
+                title = "Instalar ventilador",
+                description = "Quarto pequeno, só instalação elétrica.",
+                category = "Eletricista",
+                buttonText = "Tenho interesse"
+            )
         )
-    )
+    }
 
     val filterCategories = listOf("Todos", "Eletricista", "Encanador", "Pintor")
     var selectedCategory by remember { mutableStateOf("Todos") }
@@ -71,6 +85,11 @@ fun ProviderHomeScreen(navController: NavController) {
                     IconButton(onClick = { navController.navigate("profile") }) {
                         Icon(Icons.Default.Menu, contentDescription = "Menu / Perfil")
                     }
+                },
+                actions = {
+                    IconButton(onClick = { navController.navigate("api_services") }) {
+                        Icon(Icons.Default.Search, contentDescription = "Buscar na API")
+                    }
                 }
             )
         },
@@ -81,7 +100,15 @@ fun ProviderHomeScreen(navController: NavController) {
                     .padding(padding)
                     .padding(horizontal = 16.dp, vertical = 8.dp)
             ) {
-
+                if (isLoading) {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator()
+                    }
+                } else {
+                
                 TextField(
                     value = query,
                     onValueChange = { query = it },

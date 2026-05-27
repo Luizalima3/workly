@@ -14,33 +14,44 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.workly.components.ServiceCard
 import com.example.workly.model.ServiceItem
+import com.example.workly.viewmodel.ServiceViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ClientHomeScreen(navController: NavController) {
+    val viewModel: ServiceViewModel = viewModel()
+    val userServices by viewModel.userServices.collectAsState()
+    val isLoading by viewModel.isLoading.collectAsState()
 
-    val services = listOf(
-        ServiceItem(
-            title = "Conserto de pia",
-            description = "Preciso urgente, cozinha vazando",
-            category = "Encanador",
-            buttonText = "Ver detalhes"
-        ),
-        ServiceItem(
-            title = "Instalar ventilador",
-            description = "Quarto precisa de instalação rápida",
-            category = "Eletricista",
-            buttonText = "Ver detalhes"
-        ),
-        ServiceItem(
-            title = "Pintar sala",
-            description = "Sala pequena, pintura interna",
-            category = "Pintor",
-            buttonText = "Ver detalhes"
+    LaunchedEffect(Unit) {
+        viewModel.loadUserServices()
+    }
+
+    val services = userServices.ifEmpty {
+        listOf(
+            ServiceItem(
+                title = "Conserto de pia",
+                description = "Preciso urgente, cozinha vazando",
+                category = "Encanador",
+                buttonText = "Ver detalhes"
+            ),
+            ServiceItem(
+                title = "Instalar ventilador",
+                description = "Quarto precisa de instalação rápida",
+                category = "Eletricista",
+                buttonText = "Ver detalhes"
+            ),
+            ServiceItem(
+                title = "Pintar sala",
+                description = "Sala pequena, pintura interna",
+                category = "Pintor",
+                buttonText = "Ver detalhes"
+            )
         )
-    )
+    }
 
     val filterCategories = listOf("Todos", "Eletricista", "Encanador", "Pintor")
     var selectedCategory by remember { mutableStateOf("Todos") }
@@ -96,7 +107,7 @@ fun ClientHomeScreen(navController: NavController) {
                 onClick = {
 
                     navController.navigate(
-                        "create_service"
+                        "service_management"
                     )
                 }
 
@@ -107,6 +118,17 @@ fun ClientHomeScreen(navController: NavController) {
         }
 
     ) { padding ->
+
+        if (isLoading) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
+        } else {
 
         Column(
 

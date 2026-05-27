@@ -4,12 +4,14 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.workly.view.ApiServicesScreen
 import com.example.workly.view.ClientHomeScreen
 import com.example.workly.view.ClientProfileScreen
 import com.example.workly.view.CreateServiceScreen
 import com.example.workly.view.LoginScreen
 import com.example.workly.view.ProfileScreen
 import com.example.workly.view.ProviderHomeScreen
+import com.example.workly.view.ServiceManagementScreen
 import com.example.workly.view.ServiceDetailScreen
 import com.example.workly.view.SignupScreen
 
@@ -37,6 +39,14 @@ fun AppNavigation() {
 
         composable("provider_home") {
             ProviderHomeScreen(navController)
+        }
+
+        composable("api_services") {
+            ApiServicesScreen(navController)
+        }
+
+        composable("service_management") {
+            ServiceManagementScreen(navController)
         }
 
         composable("service_detail/{role}/{category}/{title}?description={description}") { backStackEntry ->

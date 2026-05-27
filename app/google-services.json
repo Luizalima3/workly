@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "36842447845",
+    "project_id": "workly-c5367",
+    "storage_bucket": "workly-c5367.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:36842447845:android:a24681b4d6ad005c56850c",
+        "android_client_info": {
+          "package_name": "com.example.workly"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDQZWvXpJSsDimGlZbu4nfhaOiQQ8EU3L0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

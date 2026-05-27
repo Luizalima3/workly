@@ -10,10 +10,26 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
+import android.widget.Toast
+import androidx.compose.ui.platform.LocalContext
+import com.example.workly.model.ServiceItem
+import com.example.workly.viewmodel.ServiceViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateServiceScreen(navController: NavController) {
+    val viewModel: ServiceViewModel = viewModel()
+    val isLoading by viewModel.isLoading.collectAsState()
+    val errorMessage by viewModel.errorMessage.collectAsState()
+    val context = LocalContext.current
+
+    LaunchedEffect(errorMessage) {
+        errorMessage?.let {
+            Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+            viewModel.clearError()
+        }
+    }
 
     var title by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
@@ -111,8 +127,22 @@ fun CreateServiceScreen(navController: NavController) {
             Spacer(modifier = Modifier.width(8.dp))
             Button(
                 onClick = {
-                    // por enquanto só volta
-                    navController.popBackStack()
+                    if (title.isBlank() || description.isBlank()) {
+                        Toast.makeText(
+                            context,
+                            "Preencha todos os campos",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    } else {
+                        val newService = ServiceItem(
+                            title = title,
+                            description = description,
+                            category = selectedJobType,
+                            buttonText = "Ver detalhes"
+                        )
+                        viewModel.createService(newService)
+                        navController.popBackStack()
+                    }
                 }
             ) {
                 Text("Salvar")
