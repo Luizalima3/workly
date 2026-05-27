@@ -8,28 +8,43 @@ import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.workly.model.ProfileData
+import com.example.workly.viewmodel.ProfileViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ClientProfileScreen(navController: NavController) {
 
-    var userName by remember {
-        mutableStateOf("Nome")
+    val viewModel: ProfileViewModel = viewModel()
+    val profile by viewModel.profile.collectAsState()
+    val isLoading by viewModel.isLoading.collectAsState()
+    val errorMessage by viewModel.errorMessage.collectAsState()
+
+    var userName by rememberSaveable { mutableStateOf(profile.name) }
+    var userEmail by rememberSaveable { mutableStateOf(profile.email) }
+    var userPhone by rememberSaveable { mutableStateOf(profile.phone) }
+    var userProfession by rememberSaveable { mutableStateOf(profile.profession) }
+    var userDescription by rememberSaveable { mutableStateOf(profile.description) }
+
+    LaunchedEffect(profile) {
+        userName = profile.name
+        userEmail = profile.email
+        userPhone = profile.phone
+        userProfession = profile.profession
+        userDescription = profile.description
     }
 
-    var userEmail by remember {
-        mutableStateOf("nome@email.com")
-    }
-
-    var userPhone by remember {
-        mutableStateOf("(83) 99999-9999")
+    LaunchedEffect(Unit) {
+        viewModel.loadProfileData()
     }
 
     val textFieldColors = OutlinedTextFieldDefaults.colors(
@@ -226,6 +241,30 @@ fun ClientProfileScreen(navController: NavController) {
                 colors = textFieldColors
             )
 
+            OutlinedTextField(
+                value = userProfession,
+                onValueChange = { userProfession = it },
+                label = { Text("Profissão") },
+                placeholder = { Text("Ex: Eletricista, Encanador, Pintor") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp),
+                singleLine = true,
+                colors = textFieldColors
+            )
+
+            OutlinedTextField(
+                value = userDescription,
+                onValueChange = { userDescription = it },
+                label = { Text("Descrição profissional") },
+                placeholder = { Text("Apresente seus serviços e experiências") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp),
+                maxLines = 4,
+                colors = textFieldColors
+            )
+
             Spacer(
                 modifier = Modifier.height(12.dp)
             )
@@ -233,7 +272,15 @@ fun ClientProfileScreen(navController: NavController) {
             Button(
 
                 onClick = {
-
+                    viewModel.saveProfile(
+                        ProfileData(
+                            name = userName,
+                            email = userEmail,
+                            phone = userPhone,
+                            profession = userProfession,
+                            description = userDescription
+                        )
+                    )
                 },
 
                 modifier = Modifier
@@ -242,6 +289,14 @@ fun ClientProfileScreen(navController: NavController) {
             ) {
 
                 Text("Salvar alterações")
+            }
+            if (errorMessage != null) {
+                Spacer(modifier = Modifier.height(12.dp))
+                Text(
+                    text = errorMessage,
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodySmall
+                )
             }
 
             Spacer(

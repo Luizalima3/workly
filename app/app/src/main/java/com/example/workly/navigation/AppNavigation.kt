@@ -5,10 +5,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.workly.view.ApiServicesScreen
+import com.example.workly.view.ChatScreen
 import com.example.workly.view.ClientHomeScreen
 import com.example.workly.view.ClientProfileScreen
 import com.example.workly.view.CreateServiceScreen
 import com.example.workly.view.LoginScreen
+import com.example.workly.view.MapScreen
 import com.example.workly.view.ProfileScreen
 import com.example.workly.view.ProviderHomeScreen
 import com.example.workly.view.ServiceManagementScreen
@@ -74,6 +76,14 @@ fun AppNavigation() {
 
         composable("client_profile") {
             ClientProfileScreen(navController)
+        }
+
+        composable("map") {
+            MapScreen(navController)
+        }
+
+        composable("chat") {
+            ChatScreen(navController)
         }
     }
 }

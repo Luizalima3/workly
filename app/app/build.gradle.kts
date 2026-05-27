@@ -58,6 +58,9 @@ dependencies {
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.firebase:firebase-firestore")
+    implementation("com.google.firebase:firebase-firestore-ktx")
+    implementation("com.google.android.gms:play-services-maps:18.2.1")
+    implementation("com.google.maps.android:maps-compose:2.15.0")
 
     implementation("androidx.compose.material:material-icons-extended")
     implementation(libs.androidx.compose.foundation)

@@ -6,6 +6,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ChatBubble
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
@@ -87,6 +89,12 @@ fun ProviderHomeScreen(navController: NavController) {
                     }
                 },
                 actions = {
+                    IconButton(onClick = { navController.navigate("map") }) {
+                        Icon(Icons.Default.LocationOn, contentDescription = "Mapa")
+                    }
+                    IconButton(onClick = { navController.navigate("chat") }) {
+                        Icon(Icons.Default.ChatBubble, contentDescription = "Chat")
+                    }
                     IconButton(onClick = { navController.navigate("api_services") }) {
                         Icon(Icons.Default.Search, contentDescription = "Buscar na API")
                     }
