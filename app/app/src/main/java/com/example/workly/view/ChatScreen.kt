@@ -22,22 +22,196 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.workly.viewmodel.ChatViewModel
+import com.example.workly.model.ChatMessage
 import java.text.SimpleDateFormat
 import java.util.*
 
+/**
+ * ChatScreen - RF05
+ * Tela para conversas em tempo real entre cliente e prestador
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ChatScreen(navController: NavController) {
+fun ChatScreen(
+    navController: NavController,
+    chatId: String? = null,
+    userId1: String = "",
+    userId2: String = "",
+    userName: String = "Prestador"
+) {
+    var messageText by remember { mutableStateOf("") }
+    val focusManager = LocalFocusManager.current
+    
+    // Note: Em produção, usar Hilt ou outra DI
     val viewModel: ChatViewModel = viewModel()
     val messages by viewModel.messages.collectAsState()
-    val messageText by viewModel.messageText.collectAsState()
-    val isSending by viewModel.isSending.collectAsState()
-    val errorMessage by viewModel.errorMessage.collectAsState()
-    val focusManager = LocalFocusManager.current
+    val isLoading by viewModel.isLoading.collectAsState()
+    val error by viewModel.error.collectAsState()
 
     LaunchedEffect(Unit) {
-        viewModel.loadChatMessages()
+        if (userId1.isNotEmpty() && userId2.isNotEmpty()) {
+            viewModel.initializeChat(userId1, userId2)
+        }
     }
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text(userName) },
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Voltar")
+                    }
+                }
+            )
+        }
+    ) { paddingValues ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.White)
+            ) {
+                // Lista de mensagens
+                LazyColumn(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth()
+                        .padding(8.dp),
+                    reverseLayout = true
+                ) {
+                    items(messages.reversed()) { message ->
+                        MessageBubble(message)
+                    }
+                }
+
+                Divider()
+
+                // Input de mensagem
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    TextField(
+                        value = messageText,
+                        onValueChange = { messageText = it },
+                        modifier = Modifier
+                            .weight(1f)
+                            .heightIn(min = 40.dp, max = 100.dp),
+                        placeholder = { Text("Digite uma mensagem...") },
+                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
+                        keyboardActions = KeyboardActions(
+                            onSend = {
+                                if (messageText.isNotBlank()) {
+                                    viewModel.sendMessage(
+                                        text = messageText,
+                                        senderId = userId1,
+                                        senderName = userName
+                                    )
+                                    messageText = ""
+                                    focusManager.clearFocus()
+                                }
+                            }
+                        ),
+                        colors = TextFieldDefaults.colors(
+                            unfocusedContainerColor = Color(0xFFF5F5F5),
+                            focusedContainerColor = Color(0xFFF5F5F5)
+                        ),
+                        shape = RoundedCornerShape(24.dp)
+                    )
+
+                    Spacer(modifier = Modifier.width(8.dp))
+
+                    IconButton(
+                        onClick = {
+                            if (messageText.isNotBlank()) {
+                                viewModel.sendMessage(
+                                    text = messageText,
+                                    senderId = userId1,
+                                    senderName = userName
+                                )
+                                messageText = ""
+                            }
+                        },
+                        enabled = messageText.isNotBlank() && !isLoading
+                    ) {
+                        Icon(Icons.Default.Send, contentDescription = "Enviar")
+                    }
+                }
+            }
+
+            if (isLoading) {
+                CircularProgressIndicator(
+                    modifier = Modifier.align(Alignment.Center)
+                )
+            }
+
+            if (error != null) {
+                Snackbar(
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .padding(8.dp),
+                    action = {
+                        TextButton(onClick = { viewModel.clearError() }) {
+                            Text("OK")
+                        }
+                    }
+                ) {
+                    Text(error ?: "Erro desconhecido")
+                }
+            }
+        }
+    }
+}
+
+/**
+ * Componente para exibir uma bolha de mensagem
+ */
+@Composable
+fun MessageBubble(message: ChatMessage) {
+    val isCurrentUser = false // TODO: comparar com ID do usuário atual
+    
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(4.dp),
+        horizontalArrangement = if (isCurrentUser) Arrangement.End else Arrangement.Start
+    ) {
+        Surface(
+            modifier = Modifier
+                .widthIn(max = 300.dp),
+            shape = RoundedCornerShape(12.dp),
+            color = if (isCurrentUser) Color(0xFF2196F3) else Color(0xFFF5F5F5)
+        ) {
+            Column(
+                modifier = Modifier.padding(8.dp)
+            ) {
+                Text(
+                    text = message.senderName,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = if (isCurrentUser) Color.White else Color.Gray
+                )
+                Text(
+                    text = message.text,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = if (isCurrentUser) Color.White else Color.Black
+                )
+                Text(
+                    text = SimpleDateFormat("HH:mm", Locale.getDefault())
+                        .format(Date(message.timestamp)),
+                    style = MaterialTheme.typography.labelTiny,
+                    color = if (isCurrentUser) Color.White else Color.Gray
+                )
+            }
+        }
+    }
+}
 
     Scaffold(
         topBar = {

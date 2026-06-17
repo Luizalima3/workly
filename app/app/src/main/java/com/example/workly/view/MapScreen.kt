@@ -3,6 +3,7 @@ package com.example.workly.view
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.clickable
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.LocationOn
@@ -21,23 +22,214 @@ import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
+import com.example.workly.viewmodel.MapViewModel
+import com.example.workly.model.ProviderLocationInfo
 
+/**
+ * MapScreen - RF02
+ * Tela para exibir prestadores no mapa com geolocalização
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MapScreen(navController: NavController) {
-    val center = LatLng(-23.550520, -46.633308)
-    var radiusKm by remember { mutableStateOf(3f) }
+    val viewModel: MapViewModel = viewModel()
+    val currentLocation by viewModel.currentLocation.collectAsState()
+    val providersNearby by viewModel.providersNearby.collectAsState()
+    val isLoading by viewModel.isLoading.collectAsState()
+    val searchRadius by viewModel.searchRadius.collectAsState()
+    
+    val centerLocation = currentLocation?.let {
+        LatLng(it.latitude, it.longitude)
+    } ?: LatLng(-23.550520, -46.633308) // São Paulo padrão
+    
     val cameraPositionState = rememberCameraPositionState {
-        position = com.google.android.gms.maps.CameraPosition.fromLatLngZoom(center, 12f)
+        position = com.google.android.gms.maps.CameraPosition.fromLatLngZoom(centerLocation, 14f)
     }
-    val providers = remember {
-        listOf(
-            ProviderLocation("João Eletricista", LatLng(-23.551000, -46.634500), "Eletricista"),
-            ProviderLocation("Maria Pintora", LatLng(-23.548200, -46.631000), "Pintor"),
-            ProviderLocation("Carlos Encanador", LatLng(-23.556000, -46.638000), "Encanador"),
-            ProviderLocation("Renata Limpeza", LatLng(-23.543500, -46.648000), "Serviços gerais")
+
+    LaunchedEffect(Unit) {
+        viewModel.startLocationTracking()
+    }
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Prestadores Próximos") },
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Voltar")
+                    }
+                }
+            )
+        }
+    ) { paddingValues ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+        ) {
+            Column(modifier = Modifier.fillMaxSize()) {
+                // Google Map
+                GoogleMap(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(0.6f),
+                    cameraPositionState = cameraPositionState
+                ) {
+                    // Marker da localização do usuário
+                    currentLocation?.let {
+                        Marker(
+                            state = MarkerState(position = centerLocation),
+                            title = "Sua Localização",
+                            snippet = "Você está aqui"
+                        )
+                    }
+
+                    // Círculo de raio de busca
+                    Circle(
+                        center = centerLocation,
+                        radius = searchRadius.toDouble(),
+                        fillColor = android.graphics.Color.argb(30, 33, 150, 243),
+                        strokeColor = android.graphics.Color.argb(100, 33, 150, 243),
+                        strokeWidth = 2f
+                    )
+
+                    // Markers dos prestadores
+                    providersNearby.forEach { provider ->
+                        Marker(
+                            state = MarkerState(
+                                position = LatLng(provider.latitude, provider.longitude)
+                            ),
+                            title = provider.name,
+                            snippet = provider.specialty
+                        )
+                    }
+                }
+
+                // Painel de controle
+                Surface(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(0.4f),
+                    color = MaterialTheme.colorScheme.surface
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(16.dp)
+                            .verticalScroll(rememberScrollState())
+                    ) {
+                        // Slider de raio de busca
+                        Text(
+                            text = "Raio de busca: ${(searchRadius / 1000).toInt()} km",
+                            style = MaterialTheme.typography.titleSmall
+                        )
+                        Slider(
+                            value = searchRadius / 1000f,
+                            onValueChange = { viewModel.setSearchRadius(it * 1000f) },
+                            valueRange = 1f..15f,
+                            steps = 14,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        // Lista de prestadores
+                        Text(
+                            text = "Prestadores próximos (${providersNearby.size})",
+                            style = MaterialTheme.typography.titleSmall
+                        )
+
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        providersNearby.forEach { provider ->
+                            ProviderCard(
+                                provider = provider,
+                                onClick = {
+                                    // Navegar para chat com o prestador
+                                    navController.navigate("chat/${provider.providerId}/${provider.name}")
+                                }
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                        }
+
+                        if (providersNearby.isEmpty()) {
+                            Text(
+                                text = "Nenhum prestador encontrado neste raio",
+                                style = MaterialTheme.typography.bodySmall,
+                                modifier = Modifier.align(Alignment.CenterHorizontally)
+                            )
+                        }
+                    }
+                }
+            }
+
+            if (isLoading) {
+                CircularProgressIndicator(
+                    modifier = Modifier.align(Alignment.Center)
+                )
+            }
+        }
+    }
+}
+
+/**
+ * Card para exibir informações do prestador
+ */
+@Composable
+fun ProviderCard(
+    provider: ProviderLocationInfo,
+    onClick: () -> Unit
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(enabled = true, onClick = onClick),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant
         )
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = provider.name,
+                    style = MaterialTheme.typography.titleSmall
+                )
+                Text(
+                    text = provider.specialty,
+                    style = MaterialTheme.typography.bodySmall
+                )
+                Row(
+                    modifier = Modifier.padding(top = 4.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        Icons.Default.LocationOn,
+                        contentDescription = null,
+                        modifier = Modifier.size(16.dp),
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                    Text(
+                        text = "${(provider.distance / 1000).toInt()} km",
+                        style = MaterialTheme.typography.labelSmall,
+                        modifier = Modifier.padding(start = 4.dp)
+                    )
+                }
+            }
+            
+            Button(
+                onClick = onClick,
+                modifier = Modifier.padding(start = 8.dp)
+            ) {
+                Text("Contatar")
+            }
+        }
     }
+}
 
     val radiusMeters = (radiusKm * 1000).toInt()
     val filteredProviders = providers.filter { provider ->
