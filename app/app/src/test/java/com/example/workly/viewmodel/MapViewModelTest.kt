@@ -11,9 +11,9 @@ import org.mockito.MockitoAnnotations
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
 
-/**
- * Testes Unitários para MapViewModel - RF02
- */
+   
+                                            
+   
 class MapViewModelTest {
 
     @get:Rule
@@ -33,15 +33,15 @@ class MapViewModelTest {
 
     @Test
     fun testCalculateDistance_BetweenTwoPoints_ReturnsCorrectDistance() = runTest(testDispatcher) {
-        // Arrange - São Paulo (Av. Paulista) → São Paulo (Av. Brasil)
-        // Distância aproximada: 15 km
+                                                                      
+                                      
         val lat1 = -23.561414
         val lon1 = -46.656388
         val lat2 = -23.561414
         val lon2 = -46.586388
 
-        // Act
-        // Chamando método privado via reflection
+              
+                                                 
         val method = viewModel.javaClass.getDeclaredMethod(
             "calculateDistance",
             Double::class.java,
@@ -52,32 +52,32 @@ class MapViewModelTest {
         
         val distance = method.invoke(viewModel, lat1, lon1, lat2, lon2) as Float
 
-        // Assert
+                 
         assert(distance > 0)
-        assert(distance < 100000) // Menos de 100 km
+        assert(distance < 100000)                   
     }
 
     @Test
     fun testSetSearchRadius_ValidRadius_UpdatesState() = runTest(testDispatcher) {
-        // Arrange
-        val newRadius = 10000f // 10 km
+                  
+        val newRadius = 10000f         
 
-        // Act
+              
         viewModel.setSearchRadius(newRadius)
 
-        // Assert
+                 
         assert(viewModel.searchRadius.value == newRadius)
     }
 
     @Test
     fun testFilterProvidersByDistance_EmptyList_ReturnsEmpty() = runTest(testDispatcher) {
-        // Arrange
+                  
         val emptyProviders = emptyList<com.example.workly.model.ProviderLocationInfo>()
 
-        // Act
+              
         viewModel.filterProvidersByDistance(emptyProviders, 5000f)
 
-        // Assert
+                 
         assert(viewModel.providersNearby.value.isEmpty())
     }
 }

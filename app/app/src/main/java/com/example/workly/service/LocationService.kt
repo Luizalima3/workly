@@ -14,10 +14,10 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 
-/**
- * Serviço de Localização - RF02
- * Obtém a localização do usuário para plotagem no mapa
- */
+   
+                                
+                                                       
+   
 class LocationService(
     private val context: Context,
     private val fusedLocationClient: FusedLocationProviderClient
@@ -66,9 +66,9 @@ class LocationService(
         }
     }
 
-    /**
-     * Obtém localização única (sem fluxo contínuo)
-     */
+       
+                                                   
+       
     suspend fun getLastKnownLocation(): LocationUpdate? {
         return try {
             if (ActivityCompat.checkSelfPermission(
@@ -81,7 +81,7 @@ class LocationService(
 
             val task = fusedLocationClient.lastLocation
             task.addOnSuccessListener { location ->
-                // Será processado via callback
+                                               
             }
             
             null

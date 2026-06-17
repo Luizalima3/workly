@@ -11,10 +11,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.util.UUID
 
-/**
- * ViewModel para Chat - RF05
- * Gerencia a lógica de UI para conversas e mensagens
- */
+   
+                             
+                                                     
+   
 class ChatViewModel(private val chatRepository: ChatRepository) : ViewModel() {
 
     private val _messages = MutableStateFlow<List<ChatMessage>>(emptyList())
@@ -32,9 +32,9 @@ class ChatViewModel(private val chatRepository: ChatRepository) : ViewModel() {
     private val _conversations = MutableStateFlow<List<ChatConversation>>(emptyList())
     val conversations: StateFlow<List<ChatConversation>> = _conversations
 
-    /**
-     * Carrega ou cria um chat e começa a observar mensagens
-     */
+       
+                                                            
+       
     fun initializeChat(userId1: String, userId2: String) {
         viewModelScope.launch {
             try {
@@ -42,7 +42,7 @@ class ChatViewModel(private val chatRepository: ChatRepository) : ViewModel() {
                 val chatId = chatRepository.getOrCreateChat(userId1, userId2)
                 _currentChatId.value = chatId
                 
-                // Observar mensagens em tempo real
+                                                   
                 chatRepository.observeMessages(chatId).collect { messageList ->
                     _messages.value = messageList
                 }
@@ -54,9 +54,9 @@ class ChatViewModel(private val chatRepository: ChatRepository) : ViewModel() {
         }
     }
 
-    /**
-     * Envia uma mensagem
-     */
+       
+                         
+       
     fun sendMessage(
         text: String,
         senderId: String,
@@ -90,9 +90,9 @@ class ChatViewModel(private val chatRepository: ChatRepository) : ViewModel() {
         }
     }
 
-    /**
-     * Carrega conversas do usuário
-     */
+       
+                                   
+       
     fun loadUserConversations(userId: String) {
         viewModelScope.launch {
             try {
@@ -108,9 +108,9 @@ class ChatViewModel(private val chatRepository: ChatRepository) : ViewModel() {
         }
     }
 
-    /**
-     * Deleta um chat
-     */
+       
+                     
+       
     fun deleteConversation(chatId: String) {
         viewModelScope.launch {
             try {

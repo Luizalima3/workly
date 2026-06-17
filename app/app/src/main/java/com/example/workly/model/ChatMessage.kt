@@ -2,10 +2,10 @@ package com.example.workly.model
 
 import com.google.firebase.firestore.PropertyName
 
-/**
- * Modelo de Mensagem de Chat - RF05
- * Estrutura de dados para mensagens em tempo real via Firestore
- */
+   
+                                    
+                                                                
+   
 data class ChatMessage(
     @PropertyName("id")
     val id: String = "",
@@ -26,7 +26,7 @@ data class ChatMessage(
     val timestamp: Long = 0L,
     
     @PropertyName("messageType")
-    val messageType: String = "text" // text, image, location
+    val messageType: String = "text"                         
 ) {
     constructor() : this(
         id = "",

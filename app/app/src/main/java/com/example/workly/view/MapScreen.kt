@@ -25,10 +25,10 @@ import com.google.maps.android.compose.rememberCameraPositionState
 import com.example.workly.viewmodel.MapViewModel
 import com.example.workly.model.ProviderLocationInfo
 
-/**
- * MapScreen - RF02
- * Tela para exibir prestadores no mapa com geolocalização
- */
+   
+                   
+                                                          
+   
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MapScreen(navController: NavController) {
@@ -40,7 +40,7 @@ fun MapScreen(navController: NavController) {
     
     val centerLocation = currentLocation?.let {
         LatLng(it.latitude, it.longitude)
-    } ?: LatLng(-23.550520, -46.633308) // São Paulo padrão
+    } ?: LatLng(-23.550520, -46.633308)                    
     
     val cameraPositionState = rememberCameraPositionState {
         position = com.google.android.gms.maps.CameraPosition.fromLatLngZoom(centerLocation, 14f)
@@ -68,14 +68,14 @@ fun MapScreen(navController: NavController) {
                 .padding(paddingValues)
         ) {
             Column(modifier = Modifier.fillMaxSize()) {
-                // Google Map
+                             
                 GoogleMap(
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(0.6f),
                     cameraPositionState = cameraPositionState
                 ) {
-                    // Marker da localização do usuário
+                                                       
                     currentLocation?.let {
                         Marker(
                             state = MarkerState(position = centerLocation),
@@ -84,7 +84,7 @@ fun MapScreen(navController: NavController) {
                         )
                     }
 
-                    // Círculo de raio de busca
+                                               
                     Circle(
                         center = centerLocation,
                         radius = searchRadius.toDouble(),
@@ -93,7 +93,7 @@ fun MapScreen(navController: NavController) {
                         strokeWidth = 2f
                     )
 
-                    // Markers dos prestadores
+                                              
                     providersNearby.forEach { provider ->
                         Marker(
                             state = MarkerState(
@@ -105,7 +105,7 @@ fun MapScreen(navController: NavController) {
                     }
                 }
 
-                // Painel de controle
+                                     
                 Surface(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -118,7 +118,7 @@ fun MapScreen(navController: NavController) {
                             .padding(16.dp)
                             .verticalScroll(rememberScrollState())
                     ) {
-                        // Slider de raio de busca
+                                                  
                         Text(
                             text = "Raio de busca: ${(searchRadius / 1000).toInt()} km",
                             style = MaterialTheme.typography.titleSmall
@@ -133,7 +133,7 @@ fun MapScreen(navController: NavController) {
 
                         Spacer(modifier = Modifier.height(16.dp))
 
-                        // Lista de prestadores
+                                               
                         Text(
                             text = "Prestadores próximos (${providersNearby.size})",
                             style = MaterialTheme.typography.titleSmall
@@ -145,7 +145,7 @@ fun MapScreen(navController: NavController) {
                             ProviderCard(
                                 provider = provider,
                                 onClick = {
-                                    // Navegar para chat com o prestador
+                                                                        
                                     navController.navigate("chat/${provider.providerId}/${provider.name}")
                                 }
                             )
@@ -172,9 +172,9 @@ fun MapScreen(navController: NavController) {
     }
 }
 
-/**
- * Card para exibir informações do prestador
- */
+   
+                                            
+   
 @Composable
 fun ProviderCard(
     provider: ProviderLocationInfo,
@@ -246,7 +246,7 @@ fun ProviderCard(
                     }
                 },
                 actions = {
-                    IconButton(onClick = { /* apenas ícone informativo */ }) {
+                    IconButton(onClick = {                                }) {
                         Icon(Icons.Default.LocationOn, contentDescription = "Localização")
                     }
                 }

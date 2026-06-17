@@ -9,15 +9,15 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 import java.util.UUID
 
-/**
- * Serviço de Chat com Firestore - RF05
- * Gerencia mensagens em tempo real entre cliente e prestador
- */
+   
+                                       
+                                                             
+   
 class ChatService(private val firestore: FirebaseFirestore) {
 
-    /**
-     * Envia uma mensagem no chat
-     */
+       
+                                 
+       
     suspend fun sendMessage(
         chatId: String,
         message: ChatMessage
@@ -34,9 +34,9 @@ class ChatService(private val firestore: FirebaseFirestore) {
         false
     }
 
-    /**
-     * Observa mensagens em tempo real
-     */
+       
+                                      
+       
     fun observeMessages(chatId: String): Flow<List<ChatMessage>> = callbackFlow {
         val listener = firestore.collection("chats")
             .document(chatId)
@@ -65,16 +65,16 @@ class ChatService(private val firestore: FirebaseFirestore) {
         }
     }
 
-    /**
-     * Cria ou obtém um chat entre dois usuários
-     */
+       
+                                                
+       
     suspend fun getOrCreateChat(userId1: String, userId2: String): String = try {
         val chatId = generateChatId(userId1, userId2)
         val docRef = firestore.collection("chats").document(chatId)
         
         docRef.get().await().let { doc ->
             if (!doc.exists()) {
-                // Criar novo chat
+                                  
                 docRef.set(
                     mapOf(
                         "participants" to listOf(userId1, userId2),
@@ -90,9 +90,9 @@ class ChatService(private val firestore: FirebaseFirestore) {
         ""
     }
 
-    /**
-     * Obtém histórico de chats do usuário
-     */
+       
+                                          
+       
     fun getUserChats(userId: String): Flow<List<ChatConversation>> = callbackFlow {
         val listener = firestore.collection("chats")
             .whereArrayContains("participants", userId)
@@ -125,9 +125,9 @@ class ChatService(private val firestore: FirebaseFirestore) {
         }
     }
 
-    /**
-     * Atualiza a última mensagem do chat
-     */
+       
+                                         
+       
     suspend fun updateLastMessage(
         chatId: String,
         lastMessage: String
@@ -147,9 +147,9 @@ class ChatService(private val firestore: FirebaseFirestore) {
         false
     }
 
-    /**
-     * Deleta um chat
-     */
+       
+                     
+       
     suspend fun deleteChat(chatId: String): Boolean = try {
         firestore.collection("chats")
             .document(chatId)

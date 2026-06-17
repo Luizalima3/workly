@@ -10,9 +10,9 @@ import org.mockito.MockitoAnnotations
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
 
-/**
- * Testes Unitários para ChatViewModel - RF05
- */
+   
+                                             
+   
 class ChatViewModelTest {
 
     @get:Rule
@@ -32,30 +32,30 @@ class ChatViewModelTest {
 
     @Test
     fun testSendMessage_WithBlankText_DoesNotSendMessage() = runTest(testDispatcher) {
-        // Arrange
+                  
         val blankText = "   "
         
-        // Act
+              
         viewModel.sendMessage(
             text = blankText,
             senderId = "user_1",
             senderName = "João"
         )
 
-        // Assert
+                 
         assert(viewModel.error.value != null)
     }
 
     @Test
     fun testInitializeChat_ValidUserIds_StartsObservingMessages() = runTest(testDispatcher) {
-        // Arrange
+                  
         val userId1 = "user_1"
         val userId2 = "user_2"
 
-        // Act
+              
         viewModel.initializeChat(userId1, userId2)
 
-        // Assert
+                 
         assert(viewModel.currentChatId.value.isNotEmpty())
     }
 }

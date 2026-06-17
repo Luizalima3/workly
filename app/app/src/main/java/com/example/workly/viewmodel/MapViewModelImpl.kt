@@ -10,10 +10,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-/**
- * ViewModel para Mapa e Localização - RF02
- * Gerencia a lógica de UI para o mapa de prestadores
- */
+   
+                                           
+                                                     
+   
 class MapViewModel(private val locationRepository: LocationRepository) : ViewModel() {
 
     private val _currentLocation = MutableStateFlow<LocationUpdate?>(null)
@@ -28,20 +28,20 @@ class MapViewModel(private val locationRepository: LocationRepository) : ViewMod
     private val _error = MutableStateFlow<String?>(null)
     val error: StateFlow<String?> = _error
 
-    private val _searchRadius = MutableStateFlow(5000f) // 5km padrão
+    private val _searchRadius = MutableStateFlow(5000f)              
     val searchRadius: StateFlow<Float> = _searchRadius
 
-    /**
-     * Inicia o rastreamento de localização
-     */
+       
+                                           
+       
     fun startLocationTracking() {
         viewModelScope.launch {
             try {
                 _isLoading.value = true
                 locationRepository.getCurrentLocation().collect { location ->
                     _currentLocation.value = location
-                    // Aqui você integraria com um repositório de prestadores
-                    // para filtrar os que estão no raio de distância
+                                                                             
+                                                                     
                 }
             } catch (e: Exception) {
                 _error.value = e.message ?: "Erro ao obter localização"
@@ -51,17 +51,17 @@ class MapViewModel(private val locationRepository: LocationRepository) : ViewMod
         }
     }
 
-    /**
-     * Atualiza o raio de busca
-     */
+       
+                               
+       
     fun setSearchRadius(radiusMeters: Float) {
         _searchRadius.value = radiusMeters
     }
 
-    /**
-     * Filtra prestadores por distância
-     * Isso seria idealmente integrado com um repositório que consulta o Firebase
-     */
+       
+                                       
+                                                                                 
+       
     fun filterProvidersByDistance(
         allProviders: List<ProviderLocationInfo>,
         radiusMeters: Float = _searchRadius.value
@@ -86,14 +86,14 @@ class MapViewModel(private val locationRepository: LocationRepository) : ViewMod
         _providersNearby.value = filtered
     }
 
-    /**
-     * Calcula distância entre dois pontos (Fórmula de Haversine)
-     */
+       
+                                                                 
+       
     private fun calculateDistance(
         lat1: Double, lon1: Double,
         lat2: Double, lon2: Double
     ): Float {
-        val earthRadiusMeters = 6371000f // em metros
+        val earthRadiusMeters = 6371000f             
         val dLat = Math.toRadians(lat2 - lat1)
         val dLon = Math.toRadians(lon2 - lon1)
         val a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +

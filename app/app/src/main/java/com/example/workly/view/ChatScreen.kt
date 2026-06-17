@@ -26,10 +26,10 @@ import com.example.workly.model.ChatMessage
 import java.text.SimpleDateFormat
 import java.util.*
 
-/**
- * ChatScreen - RF05
- * Tela para conversas em tempo real entre cliente e prestador
- */
+   
+                    
+                                                              
+   
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChatScreen(
@@ -42,7 +42,7 @@ fun ChatScreen(
     var messageText by remember { mutableStateOf("") }
     val focusManager = LocalFocusManager.current
     
-    // Note: Em produção, usar Hilt ou outra DI
+                                               
     val viewModel: ChatViewModel = viewModel()
     val messages by viewModel.messages.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
@@ -76,7 +76,7 @@ fun ChatScreen(
                     .fillMaxSize()
                     .background(Color.White)
             ) {
-                // Lista de mensagens
+                                     
                 LazyColumn(
                     modifier = Modifier
                         .weight(1f)
@@ -91,7 +91,7 @@ fun ChatScreen(
 
                 Divider()
 
-                // Input de mensagem
+                                    
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -170,12 +170,12 @@ fun ChatScreen(
     }
 }
 
-/**
- * Componente para exibir uma bolha de mensagem
- */
+   
+                                               
+   
 @Composable
 fun MessageBubble(message: ChatMessage) {
-    val isCurrentUser = false // TODO: comparar com ID do usuário atual
+    val isCurrentUser = false                                          
     
     Row(
         modifier = Modifier

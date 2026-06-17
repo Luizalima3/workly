@@ -5,16 +5,16 @@ import com.example.workly.service.ChatService
 import com.example.workly.service.ChatConversation
 import kotlinx.coroutines.flow.Flow
 
-/**
- * Repositório de Chat - RF05
- * Camada de abstração entre ViewModels e o serviço de chat
- */
+   
+                             
+                                                           
+   
 class ChatRepository(private val chatService: ChatService) {
 
     suspend fun sendMessage(chatId: String, message: ChatMessage): Boolean {
         val result = chatService.sendMessage(chatId, message)
         if (result) {
-            // Atualizar última mensagem do chat
+                                                
             chatService.updateLastMessage(chatId, message.text)
         }
         return result

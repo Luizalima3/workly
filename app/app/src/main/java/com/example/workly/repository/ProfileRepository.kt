@@ -46,10 +46,10 @@ class ProfileRepository {
         }
     }
 
-    /**
-     * RF04: Vinculação dos dados dinâmicos do Firebase com o perfil do prestador
-     * Atualiza a localização do prestador no mapa
-     */
+       
+                                                                                 
+                                                  
+       
     suspend fun updateProviderLocation(
         providerId: String,
         latitude: Double,
@@ -68,9 +68,9 @@ class ProfileRepository {
         false
     }
 
-    /**
-     * RF02: Obter prestadores próximos para o mapa
-     */
+       
+                                                   
+       
     suspend fun getProviderById(providerId: String): ProviderLocationInfo? {
         return try {
             val snapshot = providersCollection.document(providerId).get().await()
@@ -93,9 +93,9 @@ class ProfileRepository {
         }
     }
 
-    /**
-     * RF02: Lista todos os prestadores com localização
-     */
+       
+                                                       
+       
     suspend fun getAllProvidersWithLocation(): List<ProviderLocationInfo> {
         return try {
             val snapshot = providersCollection.get().await()

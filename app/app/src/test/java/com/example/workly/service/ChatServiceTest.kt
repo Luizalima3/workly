@@ -9,10 +9,10 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.verify
 import kotlinx.coroutines.test.runTest
 
-/**
- * Testes Unitários para ChatService - RF05
- * Cobertura alvo: >80%
- */
+   
+                                           
+                       
+   
 class ChatServiceTest {
 
     @Mock
@@ -28,24 +28,24 @@ class ChatServiceTest {
 
     @Test
     fun testGenerateChatId_ReturnsSortedUsersId() = runTest {
-        // Arrange
+                  
         val userId1 = "user_b"
         val userId2 = "user_a"
 
-        // Act
+              
         val result1 = chatService.javaClass.getDeclaredMethod(
             "generateChatId",
             String::class.java,
             String::class.java
         ).apply { isAccessible = true }.invoke(chatService, userId1, userId2) as String
 
-        // Assert
+                 
         assert(result1.contains("user_a") && result1.contains("user_b"))
     }
 
     @Test
     fun testSendMessage_ValidMessage_ReturnsTrue() = runTest {
-        // Arrange
+                  
         val chatId = "chat_123"
         val message = ChatMessage(
             id = "msg_1",
@@ -55,8 +55,8 @@ class ChatServiceTest {
             timestamp = System.currentTimeMillis()
         )
 
-        // Act & Assert
-        // Note: Em produção, mockar FirebaseFirestore.collection().document().set()
-        // Aqui é apenas um exemplo de estrutura
+                       
+                                                                                    
+                                                
     }
 }

@@ -34,7 +34,7 @@ fun CreateServiceScreen(navController: NavController) {
     var title by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
     var jobTypeExpanded by remember { mutableStateOf(false) }
-    var selectedJobType by remember { mutableStateOf("Eletricista") } // valor inicial
+    var selectedJobType by remember { mutableStateOf("Eletricista") }                 
 
     val jobTypes = listOf(
         "Eletricista",
